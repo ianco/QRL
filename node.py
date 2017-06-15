@@ -21,6 +21,11 @@ import fork
 
 log, consensus = logger.getLogger(__name__)
 
+TELNET_PORT = 2000
+API_PORT = 8080
+PEER_PORT = 9000
+EPOCH_SIZE = 15
+
 cmd_list = ['balance', 'mining', 'seed', 'hexseed', 'recoverfromhexseed', 'recoverfromwords', 'stakenextepoch', 'stake', 'address', 'wallet', 'send', 'mempool', 'getnewaddress', 'quit', 'exit', 'search' ,'json_search', 'help', 'savenewaddress', 'listaddresses','getinfo','blockheight', 'json_block', 'reboot', 'peers']
 api_list = ['block_data','stats', 'ip_geotag','exp_win','txhash', 'address', 'empty', 'last_tx', 'stake_reveal_ones', 'last_block', 'richlist', 'ping', 'stake_commits', 'stake_reveals', 'stake_list', 'stakers', 'next_stakers', 'latency']
 
@@ -231,7 +236,7 @@ def pre_pos_2(data=None):
 	
 	chain.epoch_prf = chain.pos_block_selector(chain.m_blockchain[-1].stake_seed, len(chain.stake_pool))	 #Use PRF to decide first block selector..
 	#def GEN_range(SEED, start_i, end_i, l=32): 
-	chain.epoch_PRF = GEN_range(chain.m_blockchain[-1].stake_seed, 1, 10000, 32)
+	chain.epoch_PRF = GEN_range(chain.m_blockchain[-1].stake_seed, 1, EPOCH_SIZE, 32)
 
 	printL(( 'epoch_prf:', chain.epoch_prf[1]))
 	printL(( 'spos:', spos))
@@ -318,8 +323,8 @@ def reveal_two_logic(data=None):
 	# what is the PRF output and expected winner for this block?	
 
 
-	epoch = (chain.m_blockchain[-1].blockheader.blocknumber+1)/10000			#+1 = next block
-	winner = chain.cl_hex(chain.epoch_PRF[(chain.m_blockchain[-1].blockheader.blocknumber+1)-(epoch*10000)], reveals)
+	epoch = (chain.m_blockchain[-1].blockheader.blocknumber+1)/EPOCH_SIZE			#+1 = next block
+	winner = chain.cl_hex(chain.epoch_PRF[(chain.m_blockchain[-1].blockheader.blocknumber+1)-(epoch*EPOCH_SIZE)], reveals)
 
 	if f.stake == True:
 		if chain.mining_address in [s[0] for s in chain.stake_list_get()]:
@@ -578,7 +583,7 @@ def pre_block_logic(block_obj):
 					printL (( 'Got 1 block, need 1 more  ', blocknumber ))
 					peers_blockheight_headerhash()
 					return
-				chain.state.update_epoch_diff((blocknumber/10000) - (chain.m_blockheight()/10000))
+				chain.state.update_epoch_diff((blocknumber/EPOCH_SIZE) - (chain.m_blockheight()/EPOCH_SIZE))
 				if chain.state.epoch_diff == 0:
 					if not (pos_consensus(target_block_number, target_header_hash)):
 						printL (( 'Not matched with reveal, skipping block number ', blocknumber ))
@@ -801,9 +806,9 @@ def randomize_block_fetch(block_number):
 		block_monitor = reactor.callLater(15, randomize_block_fetch, block_number)
 		if len(f.peers) > 0:
 			try:
-				if block_number % 10000 == 0 or len(f.target_peers) == 0:
+				if block_number % EPOCH_SIZE == 0 or len(f.target_peers) == 0:
 					f.get_m_blockheight_from_peers()
-					update_target_peers(min(block_number+10000,pending_blocks['target']))
+					update_target_peers(min(block_number+EPOCH_SIZE,pending_blocks['target']))
 				if len(f.target_peers) > 0:
 					random_peer = f.target_peers[random.choice(f.target_peers.keys())]
 					if block_number in pending_blocks:
@@ -1349,7 +1354,7 @@ class WalletProtocol(Protocol):
 				return
 
 			elif data[0] == 'stakenextepoch':
-				self.transport.write('>>> Sending a stake transaction for address: '+chain.mining_address+' to activate next epoch('+str(10000-(chain.m_blockchain[-1].blockheader.blocknumber-(chain.m_blockchain[-1].blockheader.epoch*10000)))+' blocks time)'+'\r\n')
+				self.transport.write('>>> Sending a stake transaction for address: '+chain.mining_address+' to activate next epoch('+str(EPOCH_SIZE-(chain.m_blockchain[-1].blockheader.blocknumber-(chain.m_blockchain[-1].blockheader.epoch*EPOCH_SIZE)))+' blocks time)'+'\r\n')
 				printL(( 'STAKE for address:', chain.mining_address))
 				f.send_st_to_peers(chain.StakeTransaction().create_stake_transaction())
 				return
@@ -1889,8 +1894,8 @@ class p2pProtocol(Protocol):
 			for s in chain.stake_list_get():
 				if s[0] == stake_address:
 					y=1
-					epoch = block_number/10000			#+1 = next block
-					for x in range(block_number-(epoch*10000)):	
+					epoch = block_number/EPOCH_SIZE			#+1 = next block
+					for x in range(block_number-(epoch*EPOCH_SIZE)):	
 						tmp = sha256(tmp)
 					if tmp != s[1]:
 						printL(( self.identity, ' reveal doesnt hash to stake terminator', 'reveal', reveal_one, 'nonce', s[2], 'hash_term', s[1]))
@@ -2046,7 +2051,7 @@ class p2pProtocol(Protocol):
 				if node not in peers_list:
 					if node != self.transport.getHost().host:
 						peers_list.append(node)
-						reactor.connectTCP(node, 9000, f)
+						reactor.connectTCP(node, PEER_PORT, f)
 		chain.state_put_peers(peers_list)
 		chain.state_save_peers()
 		return
@@ -2362,8 +2367,8 @@ class p2pFactory(ServerFactory):
 		z['stake_address'] = chain.mining_address
 		z['headerhash'] = chain.m_blockchain[-1].blockheader.headerhash				#demonstrate the hash from last block to prevent building upon invalid block..
 		z['block_number'] = chain.m_blockchain[-1].blockheader.blocknumber+1		#next block..
-		epoch = z['block_number']/10000			#+1 = next block
-		z['reveal_one'] = chain.hash_chain[:-1][::-1][z['block_number']-(epoch*10000)]	
+		epoch = z['block_number']/EPOCH_SIZE			#+1 = next block
+		z['reveal_one'] = chain.hash_chain[:-1][::-1][z['block_number']-(epoch*EPOCH_SIZE)]	
 		rkey = random_key()
 		z['reveal_two'] = sha256(z['reveal_one']+rkey)
 
@@ -2406,8 +2411,8 @@ class p2pFactory(ServerFactory):
 		z['stake_address'] = chain.mining_address
 		z['headerhash'] = chain.m_blockchain[-1].blockheader.headerhash				#demonstrate the hash from last block to prevent building upon invalid block..
 		z['block_number'] = chain.m_blockchain[-1].blockheader.blocknumber+1		#next block..
-		epoch = z['block_number']/10000			#+1 = next block
-		z['reveal_one'] = chain.hash_chain[:-1][::-1][z['block_number']-(epoch*10000)]	
+		epoch = z['block_number']/EPOCH_SIZE			#+1 = next block
+		z['reveal_one'] = chain.hash_chain[:-1][::-1][z['block_number']-(epoch*EPOCH_SIZE)]	
 		global r1_time_diff
 		z['r1_time_diff'] = r1_time_diff[z['block_number']]
 
@@ -2508,7 +2513,7 @@ class p2pFactory(ServerFactory):
 	def connect_peers(self):
 		printL(( '<<<Reconnecting to peer list:'))
 		for peer in chain.state_get_peers():
-			reactor.connectTCP(peer, 9000, f)
+			reactor.connectTCP(peer, PEER_PORT, f)
 
 	def clientConnectionLost(self, connector, reason):		#try and reconnect
 		#printL(( 'connection lost: ', reason, 'trying reconnect'
@@ -2568,13 +2573,13 @@ if __name__ == "__main__":
 	f = p2pFactory()
 	api = ApiFactory()
 
-	reactor.listenTCP(2000, WalletFactory(stuff), interface='127.0.0.1')
-	reactor.listenTCP(9000, f)
-	reactor.listenTCP(8080, api)
+	reactor.listenTCP(TELNET_PORT, WalletFactory(stuff), interface='127.0.0.1')
+	reactor.listenTCP(PEER_PORT, f)
+	reactor.listenTCP(API_PORT, api)
 
 	restart_monitor_bk()
 
-	printL(( 'Connect to the node via telnet session on port 2000: i.e "telnet localhost 2000"'))
+	printL(( 'Connect to the node via telnet session on port ' + str(TELNET_PORT) + ': i.e "telnet localhost ' + str(TELNET_PORT) + '"'))
 	printL(( '<<<Connecting to nodes in peer.dat'))
 
 	f.connect_peers()

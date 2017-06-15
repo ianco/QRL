@@ -22,6 +22,9 @@ import merkle, wallet, db
 
 import cPickle as pickle
 
+EPOCH_SIZE = 15
+ROOT_NODE = '172.19.0.2'
+
 global transaction_pool, stake_pool, txhash_timestamp, m_blockchain, my, node_list, ping_list, last_ping, recent_blocks, pos_d, pos_flag, ip_list, blockheight_map, pos_consensus
 
 global mining_address, stake_list, stake_commit, stake_reveal, hash_chain, epoch_prf, epoch_PRF, tx_per_block, stake_reveal_one, stake_reveal_two, stake_reveal_three, expected_winner
@@ -30,7 +33,7 @@ version_number = "alpha/0.08a"
 minimum_required_stakers = 5
 tx_per_block = [0, 0]
 ping_list =[]
-node_list = ['104.251.219.40']
+node_list = [ROOT_NODE]
 m_blockchain = []
 transaction_pool = []
 prev_txpool = [None]*1000
@@ -127,7 +130,7 @@ def generate_reboot_hash(key, nonce=None):
 	return json.dumps({'hash':output, 'nonce':reboot_data[1]}), "Reboot Initiated\r\n"
 
 def update_pending_tx_pool(tx, peer):
-	if len(pending_tx_pool)>=10000:
+	if len(pending_tx_pool)>=EPOCH_SIZE:
 		del pending_tx_pool[0]
 		del pending_tx_pool_hash[0]
 	pending_tx_pool.append([tx, peer])
@@ -253,7 +256,7 @@ def cl(one,many):
 
 def is_stake_banned(stake_address):
 	if stake_address in stake_ban_list:
-		epoch_diff = (m_blockheight()/10000) - (stake_ban_block[stake_address]/10000)
+		epoch_diff = (m_blockheight()/EPOCH_SIZE) - (stake_ban_block[stake_address]/EPOCH_SIZE)
 		if m_blockheight() - stake_ban_block[stake_address] > 10 or epoch_diff > 0:
 			printL (( 'Stake removed from ban list' ))
 			del stake_ban_block[stake_address]
@@ -359,7 +362,7 @@ class StakeTransaction(Transaction):
 		Transaction.__init__(self)
 
 	def create_stake_transaction(self, hashchain_terminator=None):
-		self.epoch = (m_blockchain[-1].blockheader.blocknumber)/10000	#in this block the epoch is..
+		self.epoch = (m_blockchain[-1].blockheader.blocknumber)/EPOCH_SIZE	#in this block the epoch is..
 		if hashchain_terminator == None:
 			self.hash = my[0][1].hashchain_reveal(epoch=self.epoch+1)[-1]
 		else:
@@ -485,10 +488,13 @@ class BlockHeader():
 	def __init__(self, blocknumber, hashchain_link, prev_blockheaderhash, number_transactions, hashedtransactions, number_stake, hashedstake, reveal_list=None):
 		self.blocknumber = blocknumber
 		self.hash = hashchain_link
-		self.timestamp = ntp.getNTP()
-		if self.timestamp == 0:
-			printL (( 'Failed to get NTP timestamp' ))
-			return
+		if self.blocknumber == 0:
+			self.timestamp = 0
+		else:
+			self.timestamp = ntp.getNTP()
+			if self.timestamp == 0:
+				printL (( 'Failed to get NTP timestamp' ))
+				return
 		self.prev_blockheaderhash = prev_blockheaderhash
 		self.number_transactions = number_transactions
 		self.merkle_root_tx_hash = hashedtransactions
@@ -502,8 +508,8 @@ class BlockHeader():
 			self.epoch = 0
 		elif self.blocknumber ==1:
 			self.reveal_list = []
-			self.stake_nonce = 10000-hash_chain.index(hashchain_link)			
-			self.epoch = (m_blockchain[-1].blockheader.blocknumber+1)/10000			#need to add in logic for epoch stake_list recalculation..
+			self.stake_nonce = EPOCH_SIZE-hash_chain.index(hashchain_link)			
+			self.epoch = (m_blockchain[-1].blockheader.blocknumber+1)/EPOCH_SIZE			#need to add in logic for epoch stake_list recalculation..
 			self.stake_selector = mining_address
 			self.block_reward = block_reward(self.blocknumber)
 		else:
@@ -511,7 +517,7 @@ class BlockHeader():
 			for s in stake_list_get():
 				if s[0] == mining_address:
 					self.stake_nonce = s[2]+1
-			self.epoch = (m_blockchain[-1].blockheader.blocknumber+1)/10000			#need to add in logic for epoch stake_list recalculation..
+			self.epoch = (m_blockchain[-1].blockheader.blocknumber+1)/EPOCH_SIZE			#need to add in logic for epoch stake_list recalculation..
 			self.stake_selector = mining_address
 			self.block_reward = block_reward(self.blocknumber)
 		self.headerhash = sha256(self.stake_selector+str(self.epoch)+str(self.stake_nonce)+str(self.block_reward)+str(self.timestamp)+self.hash+str(self.blocknumber)+self.prev_blockheaderhash+str(self.number_transactions)+self.merkle_root_tx_hash+str(self.number_stake)+self.hashedstake)
@@ -535,7 +541,7 @@ class CreateBlock():
 		self.transactions = []
 		for tx in transaction_pool:
 			self.transactions.append(tx)						#copy memory rather than sym link
-		curr_epoch = (m_blockchain[-1].blockheader.blocknumber)/10000
+		curr_epoch = (m_blockchain[-1].blockheader.blocknumber)/EPOCH_SIZE
 		if not stake_pool:
 			hashedstake = sha256('')
 		else:
@@ -568,14 +574,27 @@ class CreateGenesisBlock():			#first block has no previous header to reference..
 		self.blockheader = BlockHeader(blocknumber=0, hashchain_link='genesis', prev_blockheaderhash=sha256('quantum resistant ledger'),number_transactions=0, hashedtransactions=sha256('0'), number_stake=0, hashedstake=sha256('0'))
 		self.transactions = []
 		self.stake = []
-		self.state = [['Q8eb5a51d4b8a4b53c5b8b9ded93d7fd7717796c3690bee0767b1dcaadd3520c1e242', [0, 100000*100000000, []]] , ['Q44328abd64300ce05c7b297f13ff9f02de4c0e40c5956a2168dd8c0a7c476bf613ce',[0, 10000*100000000,[]]], ['Q4acc55bb7126f532cc1566242809153bb3cc8d360256aa94b7180ca4f7ffa555de57', [0, 10000*100000000,[]]], ['Q34eabf7ef2c6582096a433237a603b862fd5a70ac4efe4fd69faae21ca390512b3ac', [0, 10000*100000000,[]]], ['Qfc6a9b751915048a7888b65e77f9a248379d8b47c94081b3baced7c1234dc7f4b419', [0, 10000*100000000,[]]] ]
+		self.state = [['Q8eb5a51d4b8a4b53c5b8b9ded93d7fd7717796c3690bee0767b1dcaadd3520c1e242', [0, 100000*100000000, []]] , ['Q44328abd64300ce05c7b297f13ff9f02de4c0e40c5956a2168dd8c0a7c476bf613ce',[0, 10000*100000000,[]]], ['Q4acc55bb7126f532cc1566242809153bb3cc8d360256aa94b7180ca4f7ffa555de57', [0, 10000*100000000,[]]], ['Q34eabf7ef2c6582096a433237a603b862fd5a70ac4efe4fd69faae21ca390512b3ac', [0, 10000*100000000,[]]], ['Qfc6a9b751915048a7888b65e77f9a248379d8b47c94081b3baced7c1234dc7f4b419', [0, 10000*100000000,[]]],
+['Q816e7f9908b434f3b5ea629b99fe29aaeaa4369d15566d6a35fb757cae0521bccbb2', [0, 150000*100000000,[]]],
+['Qd434eb60f72cc25e4a2e263ecf97c21eb234d885ad840db3540d23190bf41c8bc122', [0, 150000*100000000,[]]],
+['Q54c6a375aa571a0fd12e69daf225bad1e32da34ad9cd8cf642b665c72dfdfbdbdb4c', [0, 150000*100000000,[]]],
+['Q1165f76f6a56367c311ea47074ea313406dbf637ef7810315ec66736d0f2d82dd168', [0, 150000*100000000,[]]],
+['Qea190a2e321e94b4a9742be41d6281870e5d5297183a36edc940ebeff685d3413fd1', [0, 150000*100000000,[]]] ]
 		#Qfc6a9b751915048a7888b65e77f9a248379d8b47c94081b3baced7c1234dc7f4b419 petal
 		#Q4acc55bb7126f532cc1566242809153bb3cc8d360256aa94b7180ca4f7ffa555de57 tiddler
 		#Q8eb5a51d4b8a4b53c5b8b9ded93d7fd7717796c3690bee0767b1dcaadd3520c1e242 twiglet
 		#Q44328abd64300ce05c7b297f13ff9f02de4c0e40c5956a2168dd8c0a7c476bf613ce bean
 		#Qa1f6f52ecb490cc3209a5e3580aa9539edfff0cb5a3ce06adc8f0c1e46bf38bfe0a0 flea
 		#self.stake_list = ['Q0815e965f3f51740fe3ea03ed5ffcefc90be932f68f8e29d8b792b10ddfb95113167','Q287814bf7fc151fbbda6e4e613cca6da0f04f80c4ebd4ab59352d44d5e5fc2fe95f3','Qcdfe2d4eb5dd71d49b24bf73301de767936af38fbf640385c347aa398a5a1f777aee']
-		self.stake_list = ['Q8eb5a51d4b8a4b53c5b8b9ded93d7fd7717796c3690bee0767b1dcaadd3520c1e242', 'Qfc6a9b751915048a7888b65e77f9a248379d8b47c94081b3baced7c1234dc7f4b419','Q4acc55bb7126f532cc1566242809153bb3cc8d360256aa94b7180ca4f7ffa555de57','Q44328abd64300ce05c7b297f13ff9f02de4c0e40c5956a2168dd8c0a7c476bf613ce','Qa1f6f52ecb490cc3209a5e3580aa9539edfff0cb5a3ce06adc8f0c1e46bf38bfe0a0']
+		self.stake_list = ['Q8eb5a51d4b8a4b53c5b8b9ded93d7fd7717796c3690bee0767b1dcaadd3520c1e242', 'Qfc6a9b751915048a7888b65e77f9a248379d8b47c94081b3baced7c1234dc7f4b419',
+'Q4acc55bb7126f532cc1566242809153bb3cc8d360256aa94b7180ca4f7ffa555de57',
+'Q44328abd64300ce05c7b297f13ff9f02de4c0e40c5956a2168dd8c0a7c476bf613ce',
+'Qa1f6f52ecb490cc3209a5e3580aa9539edfff0cb5a3ce06adc8f0c1e46bf38bfe0a0',
+'Q816e7f9908b434f3b5ea629b99fe29aaeaa4369d15566d6a35fb757cae0521bccbb2',
+'Qd434eb60f72cc25e4a2e263ecf97c21eb234d885ad840db3540d23190bf41c8bc122',
+'Q54c6a375aa571a0fd12e69daf225bad1e32da34ad9cd8cf642b665c72dfdfbdbdb4c',
+'Q1165f76f6a56367c311ea47074ea313406dbf637ef7810315ec66736d0f2d82dd168',
+'Qea190a2e321e94b4a9742be41d6281870e5d5297183a36edc940ebeff685d3413fd1']
 		#self.stake_list = ['Q775a5868cda4488f97436d1c7f45ddae68e896218dfe42f6233f46a72eebdb038066', 'Qe1563a15fe6ffae964473d11180aaace207bcb1ed1ac570dfb46684421f7bb4f10eb']
 		self.stake_seed = '1a02aa2cbe25c60f491aeb03131976be2f9b5e9d0bc6b6d9e0e7c7fd19c8a076c29e028f5f3924b4'
 
@@ -1367,9 +1386,9 @@ def state_add_block(block):
 		next_stake_list_put(sorted(next_sl, key=itemgetter(1)))
 		#numlist(stake_list)
 
-		epoch_PRF = merkle.GEN_range(m_blockchain[block.blockheader.epoch*10000].stake_seed, 1, 10000, 32)
-		epoch_prf = pos_block_selector(m_blockchain[block.blockheader.epoch*10000].stake_seed, len(stake_list))		#need to add a stake_seed option in block classes
-		if stake_list[epoch_prf[block.blockheader.blocknumber-block.blockheader.epoch*10000]][0] != block.blockheader.stake_selector:
+		epoch_PRF = merkle.GEN_range(m_blockchain[block.blockheader.epoch*EPOCH_SIZE].stake_seed, 1, EPOCH_SIZE, 32)
+		epoch_prf = pos_block_selector(m_blockchain[block.blockheader.epoch*EPOCH_SIZE].stake_seed, len(stake_list))		#need to add a stake_seed option in block classes
+		if stake_list[epoch_prf[block.blockheader.blocknumber-block.blockheader.epoch*EPOCH_SIZE]][0] != block.blockheader.stake_selector:
 				printL(( 'stake selector wrong..'))
 				y=-1000
 
@@ -1381,9 +1400,9 @@ def state_add_block(block):
 		
 		# how many blocks left in this epoch?
 
-		blocks_left = block.blockheader.blocknumber - (block.blockheader.epoch*10000)
-		blocks_left = 10000-blocks_left
-		#blocks_left = 10000-block.blockheader.blocknumber-(block.blockheader.epoch*10000)
+		blocks_left = block.blockheader.blocknumber - (block.blockheader.epoch*EPOCH_SIZE)
+		blocks_left = EPOCH_SIZE-blocks_left
+		#blocks_left = EPOCH_SIZE-block.blockheader.blocknumber-(block.blockheader.epoch*EPOCH_SIZE)
 
 		#if block.blockheader.epoch == m_blockchain[-1].blockheader.epoch:	#same epoch..
 		stake_list = []
@@ -1441,7 +1460,7 @@ def state_add_block(block):
 			next_stake_list_put(next_sl)
 
 			entropy = m_blockchain[block.blockheader.blocknumber-3].blockheader.headerhash+m_blockchain[block.blockheader.blocknumber-2].blockheader.headerhash+m_blockchain[block.blockheader.blocknumber-1].blockheader.headerhash+block.blockheader.headerhash
-			epoch_PRF = merkle.GEN_range(m_blockchain[0].stake_seed+entropy, 1, 10000, 32)
+			epoch_PRF = merkle.GEN_range(m_blockchain[0].stake_seed+entropy, 1, EPOCH_SIZE, 32)
 			my[0][1].hashchain(epoch=block.blockheader.epoch+1)
 			hash_chain = my[0][1].hc
 			wallet.f_save_wallet()
@@ -1669,7 +1688,7 @@ def validate_block(block, last_block='default', verbose=0, new=0):		#check valid
 		printL(( 'Block reward incorrect for block: failed validation'))
 		return False
 
-	if b.epoch != b.blocknumber/10000:
+	if b.epoch != b.blocknumber/EPOCH_SIZE:
 		printL(( 'Epoch incorrect for block: failed validation'))
 
 	if b.blocknumber == 1:
@@ -1686,7 +1705,7 @@ def validate_block(block, last_block='default', verbose=0, new=0):		#check valid
 	else:		# we look in stake_list for the hash terminator and hash to it..
 		y=0
 		terminator = sha256(b.hash)
-		for x in range(b.blocknumber-(b.epoch*10000)):
+		for x in range(b.blocknumber-(b.epoch*EPOCH_SIZE)):
 			terminator = sha256(terminator)
 
 		for st in stake_list_get():
@@ -1701,7 +1720,7 @@ def validate_block(block, last_block='default', verbose=0, new=0):		#check valid
 	
 
 	if b.blocknumber > 1:
-		if b.hash != cl_hex(epoch_PRF[b.blocknumber-(b.epoch*10000)],b.reveal_list):
+		if b.hash != cl_hex(epoch_PRF[b.blocknumber-(b.epoch*EPOCH_SIZE)],b.reveal_list):
 			printL(( "Closest hash not block selector.."))
 			return False
 		
@@ -1714,7 +1733,7 @@ def validate_block(block, last_block='default', verbose=0, new=0):		#check valid
 			i=0
 			for r in b.reveal_list:
 				t = sha256(r)
-				for x in range(b.blocknumber-(b.epoch*10000)):
+				for x in range(b.blocknumber-(b.epoch*EPOCH_SIZE)):
 					t = sha256(t)
 				for s in stake_list_get():
 					if t == s[1]:

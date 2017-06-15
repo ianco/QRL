@@ -6,8 +6,11 @@ last_bk_time = None
 last_ph_time = None
 epoch_minimum_blocknumber = None
 
+EPOCH_SIZE = 15
+
+
 def set_epoch(blocknumber):
-	epoch_minimum_blocknumber = blocknumber - blocknumber % 10000
+	epoch_minimum_blocknumber = blocknumber - blocknumber % EPOCH_SIZE
 
 def fork_recovery(blocknumber, chain, randomize_headerhash_fetch):
 	set_epoch(blocknumber)

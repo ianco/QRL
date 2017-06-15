@@ -21,6 +21,9 @@ from math import ceil, floor, log
 import time
 from os import urandom
 
+EPOCH_SIZE = 15
+EPOCH_HALF = 7
+
 
 # timing runs..
 
@@ -362,10 +365,10 @@ class XMSS():
                 return False
         return self.addresses[t][1]
 
-    def hashchain(self,n=10000, epoch=0):             #generates a 20,000th hash in iterative sha256 chain..derived from private SEED
-        x = GEN(self.private_SEED,5000+epoch,l=32)
-        y = GEN(x, 5000, l=32)
-        z = GEN(y,5000, l=32)
+    def hashchain(self,n=EPOCH_SIZE, epoch=0):             #generates a 20,000th hash in iterative sha256 chain..derived from private SEED
+        x = GEN(self.private_SEED,EPOCH_HALF+epoch,l=32)
+        y = GEN(x, EPOCH_HALF, l=32)
+        z = GEN(y,EPOCH_HALF, l=32)
         z = hexlify(z)
         hc = []
         hc.append(z)
@@ -377,10 +380,10 @@ class XMSS():
         self.hc_terminator = hc[-1]
         return
 
-    def hashchain_reveal(self, n=10000, epoch=0):
-        x = GEN(self.private_SEED,5000+epoch,l=32)
-        y = GEN(x, 5000, l=32)
-        z = GEN(y,5000, l=32)
+    def hashchain_reveal(self, n=EPOCH_SIZE, epoch=0):
+        x = GEN(self.private_SEED,EPOCH_HALF+epoch,l=32)
+        y = GEN(x, EPOCH_HALF, l=32)
+        z = GEN(y,EPOCH_HALF, l=32)
         z = hexlify(z)
         hc = []
         hc.append(z)
