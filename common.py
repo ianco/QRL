@@ -41,7 +41,7 @@ def initialize_parameters(argv):
 			print 'Error epoch and ip must be specified for local devnet'
 			sys.exit(2)
 		print 'running local DEVNET ', def_ip, ' ', def_epoch
-	c_EPOCH_SIZE = def_epoch
+	c_EPOCH_SIZE = int(def_epoch)
 	c_ROOT_NODE = def_ip
 
 def EPOCH_SIZE():
