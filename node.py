@@ -17,7 +17,7 @@ from blessings import Terminal
 import statistics
 import json
 import sys
-import getopt
+import common
 import fork
 
 log, consensus = logger.getLogger(__name__)
@@ -33,39 +33,8 @@ api_list = ['block_data','stats', 'ip_geotag','exp_win','txhash', 'address', 'em
 term = Terminal();
 print term.enter_fullscreen
 
-# parse command-line arguments
-try:
-	opts, args = getopt.getopt(sys.argv[1:], "mtde:i:", ["epoch=", "ip="])
-except getopt.GetoptError:
-	print 'node.py -t/m/d -epoch <size> -ip <ip>'
-	sys.exit(2)
-net_type = 't' # default testnet
-def_epoch = '' # epoch size
-def_ip = '' # IP for root node
-for opt, arg in opts:
-	if opt == '-h':
-		print 'node.py -t/m/d -epoch <size> -ip <ip>'
-		sys.exit()
-	elif opt == '-t': # testnet
-		net_type = 't'
-	elif opt == '-m': # mainnet
-		print 'Sorry mainnet is not yet supported'
-		sys.exit()
-	elif opt == '-d': # devnet
-		net_type = 'd'
-	elif opt in ("-e", "--epoch"):
-		def_epoch = arg
-	elif opt in ("-i", "--ip"):
-		def_ip = arg
-if net_type == 't':
-	def_epoch = '1000' # no override allowed for testnet
-	def_ip = '104.251.219.40'
-	print 'running TESTNET ', def_ip, ' ', def_epoch
-elif net_type == 'd':
-	if def_epoch == '' or def_ip == '':
-		print 'Error epoch and ip must be specified for local devnet'
-		sys.exit(2)
-	print 'running local DEVNET ', def_ip, ' ', def_epoch
+common.initialize_parameters(sys.argv)
+print 'running network ', common.ROOT_NODE(), ' ', common.EPOCH_SIZE()
 sys.exit()
 
 #State Class
