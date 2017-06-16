@@ -25,7 +25,6 @@ log, consensus = logger.getLogger(__name__)
 TELNET_PORT = 2000
 API_PORT = 8080
 PEER_PORT = 9000
-EPOCH_SIZE = 15
 
 cmd_list = ['balance', 'mining', 'seed', 'hexseed', 'recoverfromhexseed', 'recoverfromwords', 'stakenextepoch', 'stake', 'address', 'wallet', 'send', 'mempool', 'getnewaddress', 'quit', 'exit', 'search' ,'json_search', 'help', 'savenewaddress', 'listaddresses','getinfo','blockheight', 'json_block', 'reboot', 'peers']
 api_list = ['block_data','stats', 'ip_geotag','exp_win','txhash', 'address', 'empty', 'last_tx', 'stake_reveal_ones', 'last_block', 'richlist', 'ping', 'stake_commits', 'stake_reveals', 'stake_list', 'stakers', 'next_stakers', 'latency']
@@ -241,7 +240,7 @@ def pre_pos_2(data=None):
 	
 	chain.epoch_prf = chain.pos_block_selector(chain.m_blockchain[-1].stake_seed, len(chain.stake_pool))	 #Use PRF to decide first block selector..
 	#def GEN_range(SEED, start_i, end_i, l=32): 
-	chain.epoch_PRF = GEN_range(chain.m_blockchain[-1].stake_seed, 1, EPOCH_SIZE, 32)
+	chain.epoch_PRF = GEN_range(chain.m_blockchain[-1].stake_seed, 1, common.EPOCH_SIZE(), 32)
 
 	printL(( 'epoch_prf:', chain.epoch_prf[1]))
 	printL(( 'spos:', spos))
@@ -328,8 +327,8 @@ def reveal_two_logic(data=None):
 	# what is the PRF output and expected winner for this block?	
 
 
-	epoch = (chain.m_blockchain[-1].blockheader.blocknumber+1)/EPOCH_SIZE			#+1 = next block
-	winner = chain.cl_hex(chain.epoch_PRF[(chain.m_blockchain[-1].blockheader.blocknumber+1)-(epoch*EPOCH_SIZE)], reveals)
+	epoch = (chain.m_blockchain[-1].blockheader.blocknumber+1)/common.EPOCH_SIZE()			#+1 = next block
+	winner = chain.cl_hex(chain.epoch_PRF[(chain.m_blockchain[-1].blockheader.blocknumber+1)-(epoch*common.EPOCH_SIZE())], reveals)
 
 	if f.stake == True:
 		if chain.mining_address in [s[0] for s in chain.stake_list_get()]:
@@ -588,7 +587,7 @@ def pre_block_logic(block_obj):
 					printL (( 'Got 1 block, need 1 more  ', blocknumber ))
 					peers_blockheight_headerhash()
 					return
-				chain.state.update_epoch_diff((blocknumber/EPOCH_SIZE) - (chain.m_blockheight()/EPOCH_SIZE))
+				chain.state.update_epoch_diff((blocknumber/common.EPOCH_SIZE()) - (chain.m_blockheight()/common.EPOCH_SIZE()))
 				if chain.state.epoch_diff == 0:
 					if not (pos_consensus(target_block_number, target_header_hash)):
 						printL (( 'Not matched with reveal, skipping block number ', blocknumber ))
@@ -811,9 +810,9 @@ def randomize_block_fetch(block_number):
 		block_monitor = reactor.callLater(15, randomize_block_fetch, block_number)
 		if len(f.peers) > 0:
 			try:
-				if block_number % EPOCH_SIZE == 0 or len(f.target_peers) == 0:
+				if block_number % common.EPOCH_SIZE() == 0 or len(f.target_peers) == 0:
 					f.get_m_blockheight_from_peers()
-					update_target_peers(min(block_number+EPOCH_SIZE,pending_blocks['target']))
+					update_target_peers(min(block_number+common.EPOCH_SIZE(),pending_blocks['target']))
 				if len(f.target_peers) > 0:
 					random_peer = f.target_peers[random.choice(f.target_peers.keys())]
 					if block_number in pending_blocks:
@@ -1359,7 +1358,7 @@ class WalletProtocol(Protocol):
 				return
 
 			elif data[0] == 'stakenextepoch':
-				self.transport.write('>>> Sending a stake transaction for address: '+chain.mining_address+' to activate next epoch('+str(EPOCH_SIZE-(chain.m_blockchain[-1].blockheader.blocknumber-(chain.m_blockchain[-1].blockheader.epoch*EPOCH_SIZE)))+' blocks time)'+'\r\n')
+				self.transport.write('>>> Sending a stake transaction for address: '+chain.mining_address+' to activate next epoch('+str(common.EPOCH_SIZE()-(chain.m_blockchain[-1].blockheader.blocknumber-(chain.m_blockchain[-1].blockheader.epoch*common.EPOCH_SIZE())))+' blocks time)'+'\r\n')
 				printL(( 'STAKE for address:', chain.mining_address))
 				f.send_st_to_peers(chain.StakeTransaction().create_stake_transaction())
 				return
@@ -1899,8 +1898,8 @@ class p2pProtocol(Protocol):
 			for s in chain.stake_list_get():
 				if s[0] == stake_address:
 					y=1
-					epoch = block_number/EPOCH_SIZE			#+1 = next block
-					for x in range(block_number-(epoch*EPOCH_SIZE)):	
+					epoch = block_number/common.EPOCH_SIZE()			#+1 = next block
+					for x in range(block_number-(epoch*common.EPOCH_SIZE())):	
 						tmp = sha256(tmp)
 					if tmp != s[1]:
 						printL(( self.identity, ' reveal doesnt hash to stake terminator', 'reveal', reveal_one, 'nonce', s[2], 'hash_term', s[1]))
@@ -2372,8 +2371,8 @@ class p2pFactory(ServerFactory):
 		z['stake_address'] = chain.mining_address
 		z['headerhash'] = chain.m_blockchain[-1].blockheader.headerhash				#demonstrate the hash from last block to prevent building upon invalid block..
 		z['block_number'] = chain.m_blockchain[-1].blockheader.blocknumber+1		#next block..
-		epoch = z['block_number']/EPOCH_SIZE			#+1 = next block
-		z['reveal_one'] = chain.hash_chain[:-1][::-1][z['block_number']-(epoch*EPOCH_SIZE)]	
+		epoch = z['block_number']/common.EPOCH_SIZE()			#+1 = next block
+		z['reveal_one'] = chain.hash_chain[:-1][::-1][z['block_number']-(epoch*common.EPOCH_SIZE())]	
 		rkey = random_key()
 		z['reveal_two'] = sha256(z['reveal_one']+rkey)
 
@@ -2416,8 +2415,8 @@ class p2pFactory(ServerFactory):
 		z['stake_address'] = chain.mining_address
 		z['headerhash'] = chain.m_blockchain[-1].blockheader.headerhash				#demonstrate the hash from last block to prevent building upon invalid block..
 		z['block_number'] = chain.m_blockchain[-1].blockheader.blocknumber+1		#next block..
-		epoch = z['block_number']/EPOCH_SIZE			#+1 = next block
-		z['reveal_one'] = chain.hash_chain[:-1][::-1][z['block_number']-(epoch*EPOCH_SIZE)]	
+		epoch = z['block_number']/common.EPOCH_SIZE()			#+1 = next block
+		z['reveal_one'] = chain.hash_chain[:-1][::-1][z['block_number']-(epoch*common.EPOCH_SIZE())]	
 		global r1_time_diff
 		z['r1_time_diff'] = r1_time_diff[z['block_number']]
 
