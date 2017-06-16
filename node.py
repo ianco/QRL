@@ -33,8 +33,6 @@ term = Terminal();
 print term.enter_fullscreen
 
 common.initialize_parameters(sys.argv)
-print 'running network ', common.ROOT_NODE(), ' ', common.EPOCH_SIZE()
-sys.exit()
 
 #State Class
 class state:
