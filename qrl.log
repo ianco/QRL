@@ -1,0 +1,250 @@
+2017-06-16 15:07:50,482 - INFO -  [unsynced] QRL blockchain ledger v alpha/0.08a
+2017-06-16 15:07:50,486 - INFO -  [unsynced] loading db
+2017-06-16 15:07:50,494 - INFO -  [unsynced] loading wallet
+2017-06-16 15:07:50,495 - INFO -  [unsynced] [32m[info] (B[mCreating new wallet file..this could take up to a minute
+2017-06-16 15:08:26,424 - INFO -  [unsynced] *** Error ***
+2017-06-16 15:08:26,425 - INFO -  [unsynced] <type 'exceptions.TypeError'>
+2017-06-16 15:08:26,425 - INFO -  [unsynced] unsupported operand type(s) for /: 'str' and 'int'
+2017-06-16 15:10:42,545 - INFO -  [unsynced] QRL blockchain ledger v alpha/0.08a
+2017-06-16 15:10:42,545 - INFO -  [unsynced] loading db
+2017-06-16 15:10:42,551 - INFO -  [unsynced] loading wallet
+2017-06-16 15:10:42,553 - INFO -  [unsynced] [32m[info] (B[mCreating new wallet file..this could take up to a minute
+2017-06-16 15:11:24,343 - INFO -  [unsynced] Error: likely no wallet.info found, creating..
+2017-06-16 15:11:24,363 - INFO -  [unsynced] Fast saving wallet recovery details to wallet.info..
+2017-06-16 15:11:24,364 - INFO -  [unsynced] mining/staking address Qd626bfccaf05b14ce2ceff042cfc94331481095dd556c5ca9bc7097dfbb48b3f13fe
+2017-06-16 15:11:24,364 - INFO -  [unsynced] Reading chain..
+2017-06-16 15:11:24,364 - INFO -  [unsynced] Creating new chain file
+2017-06-16 15:11:24,365 - INFO -  [unsynced] 1 blocks
+2017-06-16 15:11:24,365 - INFO -  [unsynced] Verifying chain
+2017-06-16 15:11:24,365 - INFO -  [unsynced] Building state leveldb
+2017-06-16 15:11:24,365 - INFO -  [unsynced] genesis:
+2017-06-16 15:11:24,365 - INFO -  [unsynced] Loading node list..
+2017-06-16 15:11:24,365 - INFO -  [unsynced] Creating peers.dat
+2017-06-16 15:11:24,365 - INFO -  [unsynced] 104.251.219.40
+2017-06-16 15:11:24,365 - INFO -  [unsynced] >>>Listening..
+2017-06-16 15:11:24,367 - INFO -  [unsynced] Connect to the node via telnet session on port 2000: i.e "telnet localhost 2000"
+2017-06-16 15:11:24,368 - INFO -  [unsynced] <<<Connecting to nodes in peer.dat
+2017-06-16 15:11:24,368 - INFO -  [unsynced] <<<Reconnecting to peer list:
+2017-06-16 15:11:24,460 - INFO -  [unsynced] >>> new peer connection : 104.251.219.40  :  9000
+2017-06-16 15:11:24,460 - INFO -  [unsynced] <<<Requesting blockheight from 104.251.219.40
+2017-06-16 15:11:24,460 - INFO -  [unsynced] <<<Sending connected peers to 104.251.219.40
+2017-06-16 15:11:24,461 - INFO -  [unsynced] <<<Getting version 104.251.219.40
+2017-06-16 15:11:24,554 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.40 1497622284.55
+2017-06-16 15:11:24,555 - INFO -  [unsynced] 104.251.219.40 peers data received:  ['104.251.219.215', '212.13.216.53', '176.9.47.13', '104.251.219.145', '98.140.199.180', '91.150.99.103', '83.60.213.241', '173.239.81.228', '51.15.131.132', '212.21.69.98', '148.251.136.206', '139.59.228.48', '78.34.234.204', '163.172.183.178', '24.218.181.99', '24.108.36.221']
+2017-06-16 15:11:24,556 - INFO -  [unsynced] >>>Blockheight from: 104.251.219.40 blockheight:  30477 local blockheight:  0 1497622284.56
+2017-06-16 15:11:24,557 - INFO -  [unsynced] 104.251.219.40 version:  alpha/0.08a
+2017-06-16 15:11:24,650 - INFO -  [unsynced] >>> new peer connection : 104.251.219.215  :  9000
+2017-06-16 15:11:24,650 - INFO -  [unsynced] <<<Requesting blockheight from 104.251.219.215
+2017-06-16 15:11:24,650 - INFO -  [unsynced] <<<Sending connected peers to 104.251.219.215
+2017-06-16 15:11:24,650 - INFO -  [unsynced] <<<Getting version 104.251.219.215
+2017-06-16 15:11:24,653 - INFO -  [unsynced] >>> new peer connection : 104.251.219.145  :  9000
+2017-06-16 15:11:24,653 - INFO -  [unsynced] <<<Requesting blockheight from 104.251.219.145
+2017-06-16 15:11:24,653 - INFO -  [unsynced] <<<Sending connected peers to 104.251.219.145
+2017-06-16 15:11:24,654 - INFO -  [unsynced] <<<Getting version 104.251.219.145
+2017-06-16 15:11:24,715 - INFO -  [unsynced] >>> new peer connection : 212.13.216.53  :  9000
+2017-06-16 15:11:24,715 - INFO -  [unsynced] <<<Requesting blockheight from 212.13.216.53
+2017-06-16 15:11:24,715 - INFO -  [unsynced] <<<Sending connected peers to 212.13.216.53
+2017-06-16 15:11:24,715 - INFO -  [unsynced] <<<Getting version 212.13.216.53
+2017-06-16 15:11:24,717 - INFO -  [unsynced] >>> new peer connection : 51.15.131.132  :  9000
+2017-06-16 15:11:24,717 - INFO -  [unsynced] <<<Requesting blockheight from 51.15.131.132
+2017-06-16 15:11:24,718 - INFO -  [unsynced] <<<Sending connected peers to 51.15.131.132
+2017-06-16 15:11:24,718 - INFO -  [unsynced] <<<Getting version 51.15.131.132
+2017-06-16 15:11:24,728 - INFO -  [unsynced] >>> new peer connection : 176.9.47.13  :  9000
+2017-06-16 15:11:24,728 - INFO -  [unsynced] <<<Requesting blockheight from 176.9.47.13
+2017-06-16 15:11:24,728 - INFO -  [unsynced] <<<Sending connected peers to 176.9.47.13
+2017-06-16 15:11:24,728 - INFO -  [unsynced] <<<Getting version 176.9.47.13
+2017-06-16 15:11:24,748 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.215 1497622284.75
+2017-06-16 15:11:24,748 - INFO -  [unsynced] 104.251.219.215 peers data received:  ['212.13.216.53', '176.9.47.13', '104.251.219.40', '104.251.219.145', '98.140.199.180', '91.150.99.103', '83.60.213.241', '173.239.81.228', '51.15.131.132', '212.21.69.98', '148.251.136.206', '139.59.228.48', '78.34.234.204', '163.172.183.178', '24.218.181.99', '24.108.36.221']
+2017-06-16 15:11:24,750 - INFO -  [unsynced] >>> new peer connection : 163.172.183.178  :  9000
+2017-06-16 15:11:24,750 - INFO -  [unsynced] <<<Requesting blockheight from 163.172.183.178
+2017-06-16 15:11:24,750 - INFO -  [unsynced] <<<Sending connected peers to 163.172.183.178
+2017-06-16 15:11:24,750 - INFO -  [unsynced] <<<Getting version 163.172.183.178
+2017-06-16 15:11:24,765 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.145 1497622284.77
+2017-06-16 15:11:24,766 - INFO -  [unsynced] 104.251.219.145 peers data received:  ['104.251.219.40', '104.251.219.215', '212.13.216.53', '176.9.47.13', '98.140.199.180', '91.150.99.103', '83.60.213.241', '173.239.81.228', '51.15.131.132', '212.21.69.98', '148.251.136.206', '139.59.228.48', '78.34.234.204', '163.172.183.178', '24.218.181.99', '24.108.36.221']
+2017-06-16 15:11:24,766 - INFO -  [unsynced] >>>Blockheight from: 104.251.219.145 blockheight:  30478 local blockheight:  0 1497622284.77
+2017-06-16 15:11:24,767 - INFO -  [unsynced] 104.251.219.145 version:  alpha/0.08a
+2017-06-16 15:11:24,775 - INFO -  [unsynced] >>> new peer connection : 139.59.228.48  :  9000
+2017-06-16 15:11:24,776 - INFO -  [unsynced] <<<Requesting blockheight from 139.59.228.48
+2017-06-16 15:11:24,776 - INFO -  [unsynced] <<<Sending connected peers to 139.59.228.48
+2017-06-16 15:11:24,776 - INFO -  [unsynced] <<<Getting version 139.59.228.48
+2017-06-16 15:11:24,840 - INFO -  [unsynced] >>>Blockheight from: 104.251.219.215 blockheight:  29999 local blockheight:  0 1497622284.84
+2017-06-16 15:11:24,840 - INFO -  [unsynced] 104.251.219.215 version:  alpha/0.08a
+2017-06-16 15:11:24,868 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622284.87
+2017-06-16 15:11:24,869 - INFO -  [unsynced] 212.13.216.53 peers data received:  ['176.9.47.13', '104.251.219.215', '104.251.219.40', '104.251.219.145', '98.140.199.180', '91.150.99.103', '83.60.213.241', '173.239.81.228', '51.15.131.132', '212.21.69.98', '148.251.136.206', '139.59.228.48', '78.34.234.204', '163.172.183.178', '24.218.181.99', '24.108.36.221']
+2017-06-16 15:11:24,884 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622284.88
+2017-06-16 15:11:24,884 - INFO -  [unsynced] 51.15.131.132 peers data received:  ['51.15.131.132', '51.15.131.132', '212.13.216.53', '176.9.47.13', '104.251.219.215', '104.251.219.40', '104.251.219.145', '212.21.69.98', '148.251.136.206', '139.59.228.48', '78.34.234.204', '163.172.183.178', '24.218.181.99', '24.108.36.221']
+2017-06-16 15:11:24,885 - INFO -  [unsynced] >>>Blockheight from: 51.15.131.132 blockheight:  0 local blockheight:  0 1497622284.89
+2017-06-16 15:11:24,885 - INFO -  [unsynced] >>> WARNING: headerhash mismatch from  51.15.131.132
+2017-06-16 15:11:24,885 - INFO -  [unsynced] 51.15.131.132 version:  alpha/0.08a
+2017-06-16 15:11:24,936 - INFO -  [unsynced] <<<Sending blockheight to: 163.172.183.178 1497622284.94
+2017-06-16 15:11:24,937 - INFO -  [unsynced] 163.172.183.178 peers data received:  ['51.15.131.132', '163.172.183.178', '163.172.183.178', '212.13.216.53', '176.9.47.13', '104.251.219.40', '104.251.219.215', '104.251.219.145', '177.137.113.226', '139.59.228.48', '24.218.181.99', '24.108.36.221']
+2017-06-16 15:11:24,997 - INFO -  [unsynced] <<<Sending blockheight to: 139.59.228.48 1497622285.0
+2017-06-16 15:11:24,998 - INFO -  [unsynced] 139.59.228.48 peers data received:  ['104.251.219.40', '212.13.216.53', '104.251.219.215', '104.251.219.145', '176.9.47.13', '51.15.131.132', '177.137.113.226', '78.34.234.204', '163.172.183.178', '24.218.181.99', '24.108.36.221']
+2017-06-16 15:11:24,998 - INFO -  [unsynced] >>>Blockheight from: 139.59.228.48 blockheight:  0 local blockheight:  0 1497622285.0
+2017-06-16 15:11:24,998 - INFO -  [unsynced] >>> WARNING: headerhash mismatch from  139.59.228.48
+2017-06-16 15:11:24,998 - INFO -  [unsynced] 139.59.228.48 version:  alpha/0.08a
+2017-06-16 15:11:25,022 - INFO -  [unsynced] >>>Blockheight from: 212.13.216.53 blockheight:  19984 local blockheight:  0 1497622285.02
+2017-06-16 15:11:25,022 - INFO -  [unsynced] 212.13.216.53 version:  alpha/0.07a
+2017-06-16 15:11:25,118 - INFO -  [unsynced] >>>Blockheight from: 163.172.183.178 blockheight:  0 local blockheight:  0 1497622285.12
+2017-06-16 15:11:25,119 - INFO -  [unsynced] >>> WARNING: headerhash mismatch from  163.172.183.178
+2017-06-16 15:11:25,119 - INFO -  [unsynced] 163.172.183.178 version:  alpha/0.08a
+2017-06-16 15:11:25,189 - INFO -  [unsynced] >>> new peer connection : 177.137.113.226  :  9000
+2017-06-16 15:11:25,190 - INFO -  [unsynced] <<<Requesting blockheight from 177.137.113.226
+2017-06-16 15:11:25,190 - INFO -  [unsynced] <<<Sending connected peers to 177.137.113.226
+2017-06-16 15:11:25,190 - INFO -  [unsynced] <<<Getting version 177.137.113.226
+2017-06-16 15:11:26,175 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.215 1497622286.18
+2017-06-16 15:11:26,176 - INFO -  [unsynced] >>> POS reveal_one: 104.251.219.215 Q44328abd64300ce05c7b297f13ff9f02de4c0e40c5956a2168dd8c0a7c476bf613ce 30000 39f7c14b4c8cc4a0e8de82b04b79f83073ebcfb078858ea0759f389c5d52ea98
+2017-06-16 15:11:27,190 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622287.19
+2017-06-16 15:11:29,154 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622289.15
+2017-06-16 15:11:31,194 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.215 1497622291.19
+2017-06-16 15:11:32,194 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622292.19
+2017-06-16 15:11:34,266 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622294.27
+2017-06-16 15:11:36,210 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.215 1497622296.21
+2017-06-16 15:11:37,198 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622297.2
+2017-06-16 15:11:39,180 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622299.18
+2017-06-16 15:11:41,231 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.215 1497622301.23
+2017-06-16 15:11:42,409 - INFO -  [unsynced] >>>ST -  4da518ce691c5283169abbb3413d3dcdac688e763cf67cbef694776e0ce6ac42  from -  139.59.228.48  relaying..
+2017-06-16 15:11:42,410 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622302.41
+2017-06-16 15:11:44,198 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622304.2
+2017-06-16 15:11:46,177 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.215 1497622306.18
+2017-06-16 15:11:47,206 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622307.21
+2017-06-16 15:11:49,205 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622309.21
+2017-06-16 15:11:51,161 - INFO -  [unsynced] FH for a blocknumber is greater than the local chain length..
+2017-06-16 15:11:51,181 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.215 1497622311.18
+2017-06-16 15:11:52,214 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622312.21
+2017-06-16 15:11:54,234 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622314.23
+2017-06-16 15:11:56,284 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.215 1497622316.28
+2017-06-16 15:11:56,286 - INFO -  [unsynced] <<<Sending blockheight to: 139.59.228.48 1497622316.29
+2017-06-16 15:11:57,305 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622317.31
+2017-06-16 15:11:59,221 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622319.22
+2017-06-16 15:12:01,199 - INFO -  [unsynced] <<<Sending blockheight to: 104.251.219.215 1497622321.2
+2017-06-16 15:12:01,292 - INFO -  [unsynced] <<<Sending blockheight to: 139.59.228.48 1497622321.29
+2017-06-16 15:12:02,221 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622322.22
+2017-06-16 15:12:04,231 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622324.23
+2017-06-16 15:12:06,316 - INFO -  [unsynced] <<<Sending blockheight to: 139.59.228.48 1497622326.32
+2017-06-16 15:12:07,238 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622327.24
+2017-06-16 15:12:09,245 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622329.25
+2017-06-16 15:12:11,307 - INFO -  [unsynced] <<<Sending blockheight to: 139.59.228.48 1497622331.31
+2017-06-16 15:12:11,313 - INFO -  [unsynced] >>> POS reveal_one: 104.251.219.145 Qa1f6f52ecb490cc3209a5e3580aa9539edfff0cb5a3ce06adc8f0c1e46bf38bfe0a0 30479 aca5decce7b01d7bcb75881e7b561ea9c58e6b2b1731d00c33da739e05e89031
+2017-06-16 15:12:12,257 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622332.26
+2017-06-16 15:12:14,304 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622334.3
+2017-06-16 15:12:16,353 - INFO -  [unsynced] <<<Sending blockheight to: 139.59.228.48 1497622336.35
+2017-06-16 15:12:17,225 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622337.23
+2017-06-16 15:12:19,266 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622339.27
+2017-06-16 15:12:21,372 - INFO -  [unsynced] <<<Sending blockheight to: 139.59.228.48 1497622341.37
+2017-06-16 15:12:22,292 - INFO -  [unsynced] <<<Sending blockheight to: 212.13.216.53 1497622342.29
+2017-06-16 15:12:24,340 - INFO -  [unsynced] <<<Sending blockheight to: 51.15.131.132 1497622344.34
+2017-06-16 15:12:24,367 - INFO -  [unsynced]  POS cycle activated by monitor_bk() 
+2017-06-16 15:12:24,367 - INFO -  [synced] ** stopping timing loops **
+2017-06-16 15:12:24,368 - INFO -  [synced] ** starting loops **
+2017-06-16 15:12:24,973 - INFO -  [synced] xmss signing with OTS n =  0
+2017-06-16 15:12:24,980 - INFO -  [synced] <<<Transmitting ST: bc27ba56c01c52845a7a612d4577d4ad93246e61d8845deee7e51487ae5f45e4
+2017-06-16 15:12:24,984 - INFO -  [synced] Fast saving wallet recovery details to wallet.info..
+2017-06-16 15:12:26,389 - INFO -  [synced] <<<Sending blockheight to: 104.251.219.145 1497622346.39
+2017-06-16 15:12:26,390 - INFO -  [synced] <<<Sending blockheight to: 139.59.228.48 1497622346.39
+2017-06-16 15:12:27,230 - INFO -  [synced] <<<Sending blockheight to: 212.13.216.53 1497622347.23
+2017-06-16 15:12:29,290 - INFO -  [synced] <<<Sending blockheight to: 51.15.131.132 1497622349.29
+2017-06-16 15:12:31,406 - INFO -  [synced] <<<Sending blockheight to: 139.59.228.48 1497622351.41
+2017-06-16 15:12:31,407 - INFO -  [synced] <<<Sending blockheight to: 104.251.219.145 1497622351.41
+2017-06-16 15:12:32,327 - INFO -  [synced] <<<Sending blockheight to: 212.13.216.53 1497622352.33
+2017-06-16 15:12:34,312 - INFO -  [synced] <<<Sending blockheight to: 51.15.131.132 1497622354.31
+2017-06-16 15:12:34,369 - INFO -  [synced] <<<Fetching headerhash of block:  0 from  104.251.219.40 : 9000
+2017-06-16 15:12:34,369 - INFO -  [synced] <<<Fetching headerhash of block:  0 from  104.251.219.215 : 9000
+2017-06-16 15:12:34,369 - INFO -  [synced] <<<Fetching headerhash of block:  0 from  104.251.219.145 : 9000
+2017-06-16 15:12:34,370 - INFO -  [synced] <<<Fetching headerhash of block:  0 from  212.13.216.53 : 9000
+2017-06-16 15:12:34,370 - INFO -  [synced] <<<Fetching headerhash of block:  0 from  51.15.131.132 : 9000
+2017-06-16 15:12:34,370 - INFO -  [synced] <<<Fetching headerhash of block:  0 from  176.9.47.13 : 9000
+2017-06-16 15:12:34,370 - INFO -  [synced] <<<Fetching headerhash of block:  0 from  163.172.183.178 : 9000
+2017-06-16 15:12:34,370 - INFO -  [synced] <<<Fetching headerhash of block:  0 from  139.59.228.48 : 9000
+2017-06-16 15:12:34,370 - INFO -  [synced] <<<Fetching headerhash of block:  0 from  177.137.113.226 : 9000
+2017-06-16 15:12:36,423 - INFO -  [synced] <<<Sending blockheight to: 139.59.228.48 1497622356.42
+2017-06-16 15:12:36,424 - INFO -  [synced] <<<Sending blockheight to: 104.251.219.145 1497622356.42
+2017-06-16 15:12:37,242 - INFO -  [synced] <<<Sending blockheight to: 212.13.216.53 1497622357.24
+2017-06-16 15:12:38,607 - INFO -  [synced] >>>ST -  070d670cbee2692ff86f4932b55fc11f336bcf86f034b8f8bd870c68705ec435  from -  163.172.183.178  relaying..
+2017-06-16 15:12:39,324 - INFO -  [synced] <<<Sending blockheight to: 51.15.131.132 1497622359.32
+2017-06-16 15:12:39,372 - INFO -  [synced] reveal_two_logic
+2017-06-16 15:12:39,373 - INFO -  [synced] only received one reveal for this block..quitting reveal_two_logic
+2017-06-16 15:12:39,373 - INFO -  [synced] <<<Requesting blockheight from 104.251.219.40
+2017-06-16 15:12:39,373 - INFO -  [synced] <<<Requesting blockheight from 104.251.219.215
+2017-06-16 15:12:39,373 - INFO -  [synced] <<<Requesting blockheight from 104.251.219.145
+2017-06-16 15:12:39,373 - INFO -  [synced] <<<Requesting blockheight from 212.13.216.53
+2017-06-16 15:12:39,373 - INFO -  [synced] <<<Requesting blockheight from 51.15.131.132
+2017-06-16 15:12:39,374 - INFO -  [synced] <<<Requesting blockheight from 176.9.47.13
+2017-06-16 15:12:39,374 - INFO -  [synced] <<<Requesting blockheight from 163.172.183.178
+2017-06-16 15:12:39,374 - INFO -  [synced] <<<Requesting blockheight from 139.59.228.48
+2017-06-16 15:12:39,374 - INFO -  [synced] <<<Requesting blockheight from 177.137.113.226
+2017-06-16 15:12:39,483 - INFO -  [synced] >>>Blockheight from: 104.251.219.145 blockheight:  30478 local blockheight:  0 1497622359.48
+2017-06-16 15:12:39,484 - INFO -  [synced] >>>Blockheight from: 104.251.219.215 blockheight:  29999 local blockheight:  0 1497622359.48
+2017-06-16 15:12:39,484 - INFO -  [synced] >>>Blockheight from: 104.251.219.40 blockheight:  30477 local blockheight:  0 1497622359.48
+2017-06-16 15:12:39,545 - INFO -  [synced] >>>Blockheight from: 212.13.216.53 blockheight:  19984 local blockheight:  0 1497622359.55
+2017-06-16 15:12:39,575 - INFO -  [synced] >>>Blockheight from: 163.172.183.178 blockheight:  0 local blockheight:  0 1497622359.58
+2017-06-16 15:12:39,575 - INFO -  [synced] >>> WARNING: headerhash mismatch from  163.172.183.178
+2017-06-16 15:12:39,736 - INFO -  [synced] >>>Blockheight from: 51.15.131.132 blockheight:  0 local blockheight:  0 1497622359.74
+2017-06-16 15:12:39,737 - INFO -  [synced] >>> WARNING: headerhash mismatch from  51.15.131.132
+2017-06-16 15:12:39,756 - INFO -  [synced] >>>Blockheight from: 139.59.228.48 blockheight:  0 local blockheight:  0 1497622359.76
+2017-06-16 15:12:39,756 - INFO -  [synced] >>> WARNING: headerhash mismatch from  139.59.228.48
+2017-06-16 15:12:41,208 - INFO -  [synced] stake address not in the stake_list
+2017-06-16 15:12:41,392 - INFO -  [synced] <<<Sending blockheight to: 139.59.228.48 1497622361.39
+2017-06-16 15:12:41,407 - INFO -  [synced] <<<Sending blockheight to: 104.251.219.145 1497622361.41
+2017-06-16 15:12:42,261 - INFO -  [synced] <<<Sending blockheight to: 212.13.216.53 1497622362.26
+2017-06-16 15:12:44,335 - INFO -  [synced] <<<Sending blockheight to: 51.15.131.132 1497622364.34
+2017-06-16 15:12:44,376 - INFO -  [synced] reveal_two_logic
+2017-06-16 15:12:44,377 - INFO -  [synced] only received one reveal for this block..quitting reveal_two_logic
+2017-06-16 15:12:44,377 - INFO -  [synced] <<<Requesting blockheight from 104.251.219.40
+2017-06-16 15:12:44,377 - INFO -  [synced] <<<Requesting blockheight from 104.251.219.215
+2017-06-16 15:12:44,377 - INFO -  [synced] <<<Requesting blockheight from 104.251.219.145
+2017-06-16 15:12:44,377 - INFO -  [synced] <<<Requesting blockheight from 212.13.216.53
+2017-06-16 15:12:44,377 - INFO -  [synced] <<<Requesting blockheight from 51.15.131.132
+2017-06-16 15:12:44,377 - INFO -  [synced] <<<Requesting blockheight from 176.9.47.13
+2017-06-16 15:12:44,378 - INFO -  [synced] <<<Requesting blockheight from 163.172.183.178
+2017-06-16 15:12:44,378 - INFO -  [synced] <<<Requesting blockheight from 139.59.228.48
+2017-06-16 15:12:44,378 - INFO -  [synced] <<<Requesting blockheight from 177.137.113.226
+2017-06-16 15:12:44,473 - INFO -  [synced] >>>Blockheight from: 104.251.219.40 blockheight:  30477 local blockheight:  0 1497622364.47
+2017-06-16 15:12:44,474 - INFO -  [synced] >>>Blockheight from: 104.251.219.215 blockheight:  29999 local blockheight:  0 1497622364.47
+2017-06-16 15:12:44,474 - INFO -  [synced] >>>Blockheight from: 104.251.219.145 blockheight:  30478 local blockheight:  0 1497622364.47
+2017-06-16 15:12:44,533 - INFO -  [synced] >>>Blockheight from: 212.13.216.53 blockheight:  19984 local blockheight:  0 1497622364.53
+2017-06-16 15:12:44,563 - INFO -  [synced] >>>Blockheight from: 163.172.183.178 blockheight:  0 local blockheight:  0 1497622364.56
+2017-06-16 15:12:44,563 - INFO -  [synced] >>> WARNING: headerhash mismatch from  163.172.183.178
+2017-06-16 15:12:44,595 - INFO -  [synced] >>>Blockheight from: 139.59.228.48 blockheight:  0 local blockheight:  0 1497622364.6
+2017-06-16 15:12:44,596 - INFO -  [synced] >>> WARNING: headerhash mismatch from  139.59.228.48
+2017-06-16 15:12:44,686 - INFO -  [synced] >>>Blockheight from: 51.15.131.132 blockheight:  0 local blockheight:  0 1497622364.69
+2017-06-16 15:12:44,687 - INFO -  [synced] >>> WARNING: headerhash mismatch from  51.15.131.132
+2017-06-16 15:12:46,460 - INFO -  [synced] <<<Sending blockheight to: 139.59.228.48 1497622366.46
+2017-06-16 15:12:46,460 - INFO -  [synced] <<<Sending blockheight to: 104.251.219.145 1497622366.46
+2017-06-16 15:12:47,243 - INFO -  [synced] <<<Sending blockheight to: 212.13.216.53 1497622367.24
+2017-06-16 15:12:49,347 - INFO -  [synced] <<<Sending blockheight to: 51.15.131.132 1497622369.35
+2017-06-16 15:12:49,378 - INFO -  [synced] reveal_two_logic
+2017-06-16 15:12:49,379 - INFO -  [synced] only received one reveal for this block..quitting reveal_two_logic
+2017-06-16 15:12:49,379 - INFO -  [synced] <<<Requesting blockheight from 104.251.219.40
+2017-06-16 15:12:49,379 - INFO -  [synced] <<<Requesting blockheight from 104.251.219.215
+2017-06-16 15:12:49,379 - INFO -  [synced] <<<Requesting blockheight from 104.251.219.145
+2017-06-16 15:12:49,379 - INFO -  [synced] <<<Requesting blockheight from 212.13.216.53
+2017-06-16 15:12:49,379 - INFO -  [synced] <<<Requesting blockheight from 51.15.131.132
+2017-06-16 15:12:49,379 - INFO -  [synced] <<<Requesting blockheight from 176.9.47.13
+2017-06-16 15:12:49,379 - INFO -  [synced] <<<Requesting blockheight from 163.172.183.178
+2017-06-16 15:12:49,380 - INFO -  [synced] <<<Requesting blockheight from 139.59.228.48
+2017-06-16 15:12:49,380 - INFO -  [synced] <<<Requesting blockheight from 177.137.113.226
+2017-06-16 15:12:49,475 - INFO -  [synced] >>>Blockheight from: 104.251.219.215 blockheight:  29999 local blockheight:  0 1497622369.48
+2017-06-16 15:12:49,475 - INFO -  [synced] >>>Blockheight from: 104.251.219.40 blockheight:  30477 local blockheight:  0 1497622369.48
+2017-06-16 15:12:49,476 - INFO -  [synced] >>>Blockheight from: 104.251.219.145 blockheight:  30478 local blockheight:  0 1497622369.48
+2017-06-16 15:12:49,539 - INFO -  [synced] >>>Blockheight from: 212.13.216.53 blockheight:  19984 local blockheight:  0 1497622369.54
+2017-06-16 15:12:49,571 - INFO -  [synced] >>>Blockheight from: 163.172.183.178 blockheight:  0 local blockheight:  0 1497622369.57
+2017-06-16 15:12:49,573 - INFO -  [synced] >>> WARNING: headerhash mismatch from  163.172.183.178
+2017-06-16 15:12:49,601 - INFO -  [synced] >>>Blockheight from: 139.59.228.48 blockheight:  0 local blockheight:  0 1497622369.6
+2017-06-16 15:12:49,601 - INFO -  [synced] >>> WARNING: headerhash mismatch from  139.59.228.48
+2017-06-16 15:12:49,695 - INFO -  [synced] >>>Blockheight from: 51.15.131.132 blockheight:  0 local blockheight:  0 1497622369.7
+2017-06-16 15:12:49,695 - INFO -  [synced] >>> WARNING: headerhash mismatch from  51.15.131.132
+2017-06-16 15:12:50,350 - INFO -  [synced] <<<Sending blockheight to: 163.172.183.178 1497622370.35
+2017-06-16 15:12:51,401 - INFO -  [synced] <<<Sending blockheight to: 139.59.228.48 1497622371.4
+2017-06-16 15:12:51,417 - INFO -  [synced] <<<Sending blockheight to: 104.251.219.145 1497622371.42
+2017-06-16 15:12:52,296 - INFO -  [synced] <<<Sending blockheight to: 212.13.216.53 1497622372.3
+2017-06-16 15:12:53,477 - INFO -  [synced] 51.15.131.132  disconnnected.  remainder connected:  8
+2017-06-16 15:12:53,479 - INFO -  [synced] 139.59.228.48  disconnnected.  remainder connected:  7
+2017-06-16 15:12:53,479 - INFO -  [synced] 177.137.113.226  disconnnected.  remainder connected:  6
+2017-06-16 15:12:53,480 - INFO -  [synced] 163.172.183.178  disconnnected.  remainder connected:  5
+2017-06-16 15:12:53,480 - INFO -  [synced] 104.251.219.40  disconnnected.  remainder connected:  4
+2017-06-16 15:12:53,480 - INFO -  [synced] 212.13.216.53  disconnnected.  remainder connected:  3
+2017-06-16 15:12:53,481 - INFO -  [synced] 176.9.47.13  disconnnected.  remainder connected:  2
+2017-06-16 15:12:53,482 - INFO -  [synced] 104.251.219.215  disconnnected.  remainder connected:  1
+2017-06-16 15:12:53,483 - INFO -  [synced] 104.251.219.145  disconnnected.  remainder connected:  0
+2017-06-16 15:12:53,483 - INFO -  [synced] ** stopping timing loops **
