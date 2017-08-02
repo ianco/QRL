@@ -24,8 +24,8 @@ class State:
         else:
             printL(('Creating peers.dat'))
             with open('./peers.dat', 'w+') as myfile:
-                pickle.dump(c.node_list, myfile)
-                self.state_put_peers(c.node_list)
+                pickle.dump(c.peer_list, myfile)
+                self.state_put_peers(c.peer_list)
 
     def state_save_peers(self):
         with open("./peers.dat", "w+") as myfile:
@@ -258,8 +258,8 @@ class State:
                             else:
                                 printL (( '^^^^^^Rejected as ', epoch_blocknum, threshold_block-1 ))
                                 printL (( 'Loss of data ', s[0], 'old ', s[3], 'new ', st.first_hash ))
-                        else:
-                            printL (('Else of next_sl ', s[0], s[3], st.first_hash ))
+                        #else:
+                        #    printL (('Else of next_sl ', s[0], s[3], st.first_hash ))
                         break
 
                 address_txn[st.txfrom][2].append(pubhash)
@@ -341,7 +341,12 @@ class State:
         printL((block.blockheader.headerhash, str(len(block.transactions)), 'tx ', ' passed verification.'))
         return True
 
-    def calc_seed(self, sl):
+    def calc_seed(self, sl, verbose=False):
+        if verbose:
+            printL (('stake_list --> '))
+            for s in sl:
+                printL (( s[0], s[3] ))
+
         epoch_seed = 0
 
         for staker in sl:
