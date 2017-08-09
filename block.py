@@ -11,6 +11,10 @@ from copy import deepcopy
 class BlockHeader():
     def create(self, chain, blocknumber, hashchain_link, prev_blockheaderhash, number_transactions, hashedtransactions,
                number_stake, hashedstake, reveal_list=None, vote_hashes=None, last_block_number=-1):
+        if not reveal_list:
+            reveal_list = []
+        if not vote_hashes:
+            vote_hashes = []
         self.blocknumber = blocknumber
         self.hash = hashchain_link
         if self.blocknumber == 0:
@@ -223,7 +227,9 @@ class Block():
 
         stake = json_block['stake']
         self.stake = []
-
+        if self.blockheader.blocknumber == 0:
+            self.state = json_block['state']
+            self.stake_list = json_block['stake_list']
         for st in stake:
             st_obj = StakeTransaction().dict_to_transaction(st)
             if st_obj.epoch != self.blockheader.epoch:
@@ -306,10 +312,14 @@ class Block():
                 printL(('Stake selector not in stake_list for this epoch..'))
                 return False
 
-
-            if b.hash not in chain.select_winners(b.reveal_list, topN=3, blocknumber=b.blocknumber, block=self, seed=chain.block_chain_buffer.get_epoch_seed(b.blocknumber)):
-                printL(("Closest hash not in block selector.."))
-                return False
+            '''
+                This condition not required, in case of a strongest block selected is not in top 3. 
+                As it may happen that top 3 winners, didn't create the block, and other node created the block who was 
+                not in the top 3 winners.
+            '''
+            #if b.hash not in chain.select_winners(b.reveal_list, topN=3, blocknumber=b.blocknumber, block=self, seed=chain.block_chain_buffer.get_epoch_seed(b.blocknumber)):
+            #    printL(("Closest hash not in block selector.."))
+            #    return False
 
             if len(b.reveal_list) != len(set(b.reveal_list)):
                 printL(('Repetition in reveal_list'))

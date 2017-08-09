@@ -1,6 +1,16 @@
+<<<<<<< HEAD
 *.log
 *.pyc
 state
 *.dat
 *.info
 
+=======
+*.swp
+.DS_Store
+*.py[cod]
+*.dat
+*.info
+*.log
+state/
+>>>>>>> 2ecc32eefb9820ae5b6062c41ed51d9ded54b577

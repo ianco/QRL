@@ -10,6 +10,12 @@
 
 __author__ = 'pete'
 
+import gc
+import configuration as c
+if c.compression_type == 'bz2':
+    import bz2 as zip
+else:
+    import zlib as zip
 from StringIO import StringIO
 from time import time, sleep
 from operator import itemgetter, attrgetter
@@ -23,7 +29,7 @@ from collections import defaultdict
 
 import cPickle as pickle
 
-import configuration as c
+
 import wallet
 from block import CreateGenesisBlock
 import merkle
@@ -36,7 +42,7 @@ from decimal import Decimal
 class Chain:
     def __init__(self, state):
         self.state = state
-        self.version_number = "alpha/0.11a"  # should be moved to node.py
+        self.version_number = c.version_number  
         self.transaction_pool = []
         self.stake_pool = []
         self.txhash_timestamp = []
@@ -62,7 +68,7 @@ class Chain:
         self.stake_validator_latency = defaultdict(dict)
 
     def initialize(self):
-        printL(('QRL blockchain ledger v', self.version_number))
+        printL(('QRL blockchain ledger ', self.version_number))
         printL(('loading db'))
         printL(('loading wallet'))
 
@@ -586,7 +592,7 @@ class Chain:
         if self.state.state_uptodate(self.m_blockheight()) == False:
             return helper.json_print_telnet({'status': 'error', 'error': 'leveldb failed', 'method': 'richlist'})
 
-        addr = db.return_all_addresses()
+        addr = self.state.db.return_all_addresses()
         richlist = sorted(addr, key=itemgetter(1), reverse=True)
 
         rl = {}
@@ -758,6 +764,76 @@ class Chain:
                     if long == 1: helper.json_print(tx)
         return
 
+    def f_read_chain(self, epoch):
+        delimiter = c.binary_file_delimiter
+        block_list = []
+        if os.path.isfile('./chain.da' + str(epoch)) is False:
+            if epoch != 0:
+                return []
+            printL(('Creating new chain file'))
+            block_list.append(CreateGenesisBlock(self))
+            return block_list
+
+        try:
+            with open('./chain.da'+str(epoch), 'r') as myfile:
+                jsonBlock = StringIO()
+                tmp = ""
+                count = 0
+                offset = 0
+                while True:
+                    chars = myfile.read(c.chain_read_buffer_size)
+                    for char in chars:
+                        offset += 1
+                        if count>0 and char!=delimiter[count]:
+                            count = 0
+                            jsonBlock.write(tmp)
+                            tmp = ""
+                        if char == delimiter[count]:
+                            tmp += delimiter[count]
+                            count += 1
+                            if count < len(delimiter):
+                                continue
+                            tmp = ""
+                            count = 0
+                            compressedBlock = jsonBlock.getvalue()
+                            pos = offset - len(delimiter) - len(compressedBlock)
+                            jsonBlock = zip.decompress(compressedBlock)
+                            block = helper.json_decode_block(jsonBlock)
+                            self.update_block_metadata(block.blockheader.blocknumber, pos, len(compressedBlock))
+                            block_list.append(block)
+                            jsonBlock = StringIO()
+                            continue
+                        jsonBlock.write(char)
+                    if len(chars) < c.chain_read_buffer_size:
+                        break
+        except:
+            printL(('IO error'))
+            return []
+
+        gc.collect()
+        return block_list
+
+
+    '''
+    def f_read_chain(self, epoch):
+        block_list = []
+
+        if os.path.isfile('./chain.da'+str(epoch)) is False:
+            if epoch != 0:
+                return None
+            printL(('Creating new chain file'))
+            block_list.append(CreateGenesisBlock(self))
+            with open("./chain.da"+str(epoch), "a") as myfile:  # add in a new call to create random_otsmss
+                pickle.dump(block_list, myfile)
+                gc.collect()
+        try:
+            with open('./chain.da'+str(epoch), 'r') as myfile:
+                return pickle.load(myfile)
+        except:
+            printL(('IO error'))
+            return None
+    '''
+    '''
     def f_read_chain(self):
         block_list = []
         if os.path.isfile('./chain.dat') is False:
@@ -765,13 +841,14 @@ class Chain:
             block_list.append(CreateGenesisBlock(self))
             with open("./chain.dat", "a") as myfile:  # add in a new call to create random_otsmss
                 pickle.dump(block_list, myfile)
+                gc.collect()
         try:
             with open('./chain.dat', 'r') as myfile:
                 return pickle.load(myfile)
         except:
             printL(('IO error'))
             return False
-
+    '''
     def f_get_last_block(self):
         return self.f_read_chain()[-1]
 
@@ -784,18 +861,34 @@ class Chain:
             with open("./chain.dat",
                       "w+") as myfile:  # overwrites self.wallet..must use w+ as cannot append pickle item
                 pickle.dump(data, myfile)
+
+        gc.collect()
         return
+
+    def update_block_metadata(self, blocknumber, blockPos, blockSize):
+        self.state.db.db.Put('block_' + str(blocknumber), str(blockPos) + ',' + str(blockSize))
 
     def f_write_m_blockchain(self):
+        blocknumber = self.m_blockchain[-1].blockheader.blocknumber
+        suffix = int(blocknumber // c.blocks_per_chain_file)
+        writeable = self.m_blockchain[-c.disk_writes_after_x_blocks:]
         printL(('Appending data to chain'))
-        with open("./chain.dat", "w+") as myfile:
-            pickle.dump(self.m_blockchain, myfile)
+        with open('./chain.da'+str(suffix), 'a') as myfile:
+            for block in writeable:
+                jsonBlock = helper.json_bytestream(block)
+                compressedBlock = zip.compress(jsonBlock, c.compression_level)
+                pos = myfile.tell()
+                blockSize = len(compressedBlock)
+                self.update_block_metadata(block.blockheader.blocknumber, pos, blockSize)
+                myfile.write(compressedBlock)
+                myfile.write(c.binary_file_delimiter)
+        del self.m_blockchain[:-1]
+        gc.collect()
         return
 
-    def m_load_chain(self):
+    def load_chain_by_epoch(self, epoch):
 
-        del self.m_blockchain[:]
-        chains = self.f_read_chain()
+        chains = self.f_read_chain(epoch)
         self.m_blockchain.append(chains[0])
         self.state.state_read_genesis(self.m_get_block(0))
         self.block_chain_buffer = ChainBuffer(self)
@@ -804,18 +897,71 @@ class Chain:
             self.block_chain_buffer.add_block_mainchain(block, verify_block_reveal_list=False, validate=False)
         return self.m_blockchain
 
+    def m_load_chain(self):
+
+        del self.m_blockchain[:]
+        self.state.db.zero_all_addresses()
+        chains = self.f_read_chain(0)
+        self.m_blockchain.append(chains[0])
+        self.state.state_read_genesis(self.m_get_block(0))
+        self.block_chain_buffer = ChainBuffer(self)
+
+        for block in chains[1:]:
+            self.block_chain_buffer.add_block_mainchain(block, verify_block_reveal_list=False, validate=False)
+
+        if len(self.m_blockchain) < c.blocks_per_chain_file:
+            return self.m_blockchain
+
+        epoch = 1
+        while os.path.isfile('./chain.da' + str(epoch)):
+            del self.m_blockchain[:-1]
+            chains = self.f_read_chain(epoch)
+
+            for block in chains:
+                self.block_chain_buffer.add_block_mainchain(block, verify_block_reveal_list=False, validate=False)
+            epoch += 1
+
+        gc.collect()
+        return self.m_blockchain
+
     def m_read_chain(self):
         if not self.m_blockchain:
             self.m_load_chain()
         return self.m_blockchain
 
+    def load_from_file(self, blocknum):
+        epoch = int( blocknum // c.blocks_per_chain_file )
+        with open('chain.da'+str(epoch), 'r') as f:
+            pos_size = self.state.db.db.Get('block_'+str(blocknum))
+            pos, size = pos_size.split(',')
+            pos = int(pos)
+            size = int(size)
+            f.seek(pos)
+            jsonBlock = zip.decompress(f.read(size))
+            block = helper.json_decode_block(jsonBlock)
+            return block
+
     def m_get_block(self, n):
-        if n > len(self.m_blockchain) - 1 or n < 0:
+        if len(self.m_blockchain) == 0:
             return False
-        return self.m_read_chain()[n]
+
+        beginning_blocknum = self.m_blockchain[0].blockheader.blocknumber
+        diff = n - beginning_blocknum
+
+        if diff < 0:
+            return self.load_from_file(n)
+
+        if diff < len(self.m_blockchain):
+            return self.m_blockchain[diff]
+
+
+
+        return False
 
     def m_get_last_block(self):
-        return self.m_read_chain()[-1]
+        if len(self.m_blockchain) == 0:
+            return False
+        return self.m_blockchain[-1]
 
     def m_create_block(self, nonce, reveal_list=[], vote_hashes=[], last_block_number=-1):
         myBlock = Block()
@@ -847,12 +993,14 @@ class Chain:
         self.m_blockchain.pop()
 
     def m_blockheight(self):
-        # return len(self.m_read_chain()) - 1
+        #return len(self.m_read_chain()) - 1
         return self.height()
 
 
     def height(self):
-        return len(self.m_blockchain) - 1
+        if len(self.m_blockchain):
+            return self.m_blockchain[-1].blockheader.blocknumber
+        return -1
 
     def m_info_block(self, n):
         if n > self.m_blockheight():
@@ -862,16 +1010,16 @@ class Chain:
         printL(('Block: ', b, str(b.blockheader.blocknumber)))
         printL(('Blocksize, ', str(len(helper.json_bytestream(b)))))
         printL(('Number of transactions: ', str(len(b.transactions))))
-        printL(('Validates: ', validate_block(b)))
+        printL(('Validates: ', b.validate_block(self)))
 
     def m_f_sync_chain(self):
-        if self.m_blockchain[-1].blockheader.blocknumber % 100 == 0:
+        if (self.m_blockchain[-1].blockheader.blocknumber + 1) % c.disk_writes_after_x_blocks == 0:
             self.f_write_m_blockchain()
         return
 
     def m_verify_chain(self, verbose=0):
         for block in self.m_read_chain()[1:]:
-            if self.validate_block(block, verbose=verbose) is False:
+            if block.validate_block(self, verbose=verbose) is False:
                 return False
         return True
 
@@ -1041,14 +1189,14 @@ class StateBuffer:
 
 
 class ChainBuffer:
-    def __init__(self, chain, size=3):
+    def __init__(self, chain):
         self.chain = chain
         self.state = self.chain.state
         self.wallet = self.chain.wallet
         self.blocks = {}
         self.strongest_chain = {}
         self.headerhashes = {}
-        self.size = size
+        self.size = c.reorg_limit
         self.pending_blocks = {}
         self.epoch = max(0, self.chain.height()) // c.blocks_per_epoch  # Main chain epoch
         self.my = {}
@@ -1060,7 +1208,7 @@ class ChainBuffer:
         #self.st_buffer = []  # maintain the list of st transaction that has been confirmed in buffer
         self.tx_buffer = {}  # maintain the list of tx transaction that has been confirmed in buffer
         self.st_buffer = {}  # maintain the list of st transaction that has been confirmed in buffer
-        if len(self.chain.m_blockchain) > 0:
+        if self.chain.height() > 0:
             self.epoch = int(self.chain.m_blockchain[-1].blockheader.blocknumber / c.blocks_per_epoch)
 
     def get_st_balance(self, stake_address, blocknumber):
@@ -1109,11 +1257,11 @@ class ChainBuffer:
         return self.strongest_chain[last_blocknum][0].block
 
     def get_block_n(self, blocknum):
-        if len(self.chain.m_blockchain) == 0:
+        if self.chain.height() == -1:
             self.chain.m_read_chain()
 
-        if blocknum < len(self.chain.m_blockchain):
-            return self.chain.m_blockchain[blocknum]
+        if blocknum <= self.chain.height():
+            return self.chain.m_get_block(blocknum)
 
         if blocknum not in self.strongest_chain:
             return None
@@ -1131,11 +1279,14 @@ class ChainBuffer:
         new_my[0][1].hashchain(epoch=epoch)
         self.my[epoch] = new_my
         self.hash_chain[epoch] = new_my[0][1].hc
-        self.wallet.f_save_wallet()
+        #self.wallet.f_save_wallet()
+        gc.collect()
 
     def add_txns_buffer(self):
         if len(self.blocks) == 0:
             return
+        del self.tx_buffer
+        del self.st_buffer
         self.tx_buffer = {}
         self.st_buffer = {}
         min_blocknum = self.chain.height() + 1
@@ -1190,7 +1341,11 @@ class ChainBuffer:
         self.add_txns_buffer()
         if block_left == 1:  # As state_add_block would have already moved the next stake list to stake_list
             self.epoch_seed = self.state.calc_seed(self.state.stake_list_get(), verbose=False)
-            self.update_hash_chain(block.blockheader.blocknumber)
+            #self.update_hash_chain(block.blockheader.blocknumber)
+            self.my[epoch + 1] = self.chain.my
+            self.hash_chain[epoch + 1] = self.chain.my[0][1].hc
+            if epoch in self.my:
+                del self.my[epoch]
         else:
             self.epoch_seed = sha256(block.blockheader.hash + str(self.epoch_seed))
 
@@ -1268,10 +1423,11 @@ class ChainBuffer:
 
         self.headerhashes[blocknum].append(block.blockheader.headerhash)
 
-        block_left = c.blocks_per_epoch - (
-            block.blockheader.blocknumber - (block.blockheader.epoch * c.blocks_per_epoch))
+        #block_left = c.blocks_per_epoch - (
+        #    block.blockheader.blocknumber - (block.blockheader.epoch * c.blocks_per_epoch))
         epoch = blocknum // c.blocks_per_epoch
-        if epoch + 1 not in self.my and block_left == 1:
+        next_epoch = (blocknum + 1) // c.blocks_per_epoch
+        if epoch != next_epoch:
             self.update_hash_chain(block.blockheader.blocknumber)
 
         self.add_txns_buffer()
@@ -1279,7 +1435,11 @@ class ChainBuffer:
         return True
 
     def recalculate_strongest_chain(self, blocknum):
-        del self.strongest_chain[blocknum+1:]
+        if blocknum+1 not in self.strongest_chain:
+            return
+
+        for i in range(blocknum+1, max(self.strongest_chain)+1):
+            del self.strongest_chain[i]
 
         block = self.strongest_chain[blocknum].block
         prev_headerhash = block.blockheader.headerhash
@@ -1287,14 +1447,43 @@ class ChainBuffer:
         block_state_buffer = self.get_strongest_block(blocknum, prev_headerhash)
 
         while block_state_buffer is not None:
+            self.strongest_chain[blocknum] = block_state_buffer
+
             block_buffer = block_state_buffer[0]
             state_buffer = block_state_buffer[1]
             block = block_buffer.block
 
-            self.strongest_chain[blocknum] = [block_buffer, state_buffer]
             prev_headerhash = block.blockheader.headerhash
             blocknum += 1
             block_state_buffer = self.get_strongest_block(blocknum, prev_headerhash)
+
+    def get_strongest_block(self, blocknum, prev_headerhash):
+        if blocknum not in self.blocks:
+            return None
+        strongest_blockBuffer = None
+
+        for blockStateBuffer in self.blocks[blocknum]:
+            block = blockStateBuffer[0].block
+            if prev_headerhash == block.blockheader.prev_blockheaderhash:
+                if strongest_blockBuffer and strongest_blockBuffer[0].score < blockStateBuffer[0].score:
+                    continue
+                strongest_blockBuffer = blockStateBuffer
+
+        if not strongest_blockBuffer:
+            return None
+
+        return strongest_blockBuffer
+
+    def get_strongest_headerhash(self, blocknum):
+        if blocknum <= self.chain.height():
+            return self.chain.m_get_block(blocknum).blockheader.headerhash
+            #return self.chain.m_blockchain[blocknum].blockheader.headerhash
+
+        if blocknum not in self.strongest_chain:
+            printL(('Blocknum : ', str(blocknum), ' not found in buffer'))
+            return None
+
+        return self.strongest_chain[blocknum][0].block.blockheader.headerhash
 
     def get_epoch_seed(self, blocknumber):
         if blocknumber - 1 == self.chain.height():
@@ -1360,11 +1549,15 @@ class ChainBuffer:
         del (self.blocks[blocknum])
         del (self.headerhashes[blocknum])
         del self.strongest_chain[blocknum]
-        prev_epoch = self.epoch
+        prev_epoch = int((blocknum - 1) // c.blocks_per_epoch )
         self.epoch = int(blocknum // c.blocks_per_epoch)
         if prev_epoch != self.epoch:
-            del self.hash_chain[prev_epoch]
+            if prev_epoch in self.my:
+                del self.my[prev_epoch]
+            if prev_epoch in self.hash_chain:
+                del self.hash_chain[prev_epoch]
 
+        gc.collect()
         return True
 
     def height(self):
@@ -1372,37 +1565,8 @@ class ChainBuffer:
             return self.chain.height()
         return max(self.strongest_chain)
 
-    def get_strongest_block(self, blocknum, prev_headerhash):
-        if blocknum not in self.blocks:
-            return None
-        strongest_blockBuffer = None
-
-        for blockStateBuffer in self.blocks[blocknum]:
-            block = blockStateBuffer[0].block
-            if prev_headerhash == block.blockheader.prev_blockheaderhash:
-                if strongest_blockBuffer and strongest_blockBuffer[0].score < blockStateBuffer[0].score:
-                    continue
-                strongest_blockBuffer = blockStateBuffer
-
-        if not strongest_blockBuffer:
-            return None
-
-        return strongest_blockBuffer
-
-    # return self.blocks[blocknum][0].block
-
-    def get_strongest_headerhash(self, blocknum):
-        if blocknum < len(self.chain.m_blockchain):
-            return self.chain.m_blockchain[blocknum].blockheader.headerhash
-
-        if blocknum not in self.strongest_chain:
-            printL(('Blocknum : ', str(blocknum), ' not found in buffer'))
-            return None
-
-        return self.strongest_chain[blocknum][0].block.blockheader.headerhash
-
     def send_block(self, blocknumber, transport, wrap_message):
-        if blocknumber < len(self.chain.m_blockchain):
+        if blocknumber <= self.chain.height():
             transport.write(wrap_message('PB', helper.json_bytestream(self.chain.m_get_block(blocknumber))))
         elif blocknumber in self.blocks:
             tmp = {blocknumber: []}
